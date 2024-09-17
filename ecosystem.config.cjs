@@ -3,6 +3,7 @@ module.exports = {
         {
             name: 'checkdispense',                // Имя приложения
             script: './check_dispense.js',            // Точка входа в ваше приложение
+            cwd: './check_dispense/',
             env_production: {
                 NODE_ENV: process.env.NODE_ENV,
                 TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN,

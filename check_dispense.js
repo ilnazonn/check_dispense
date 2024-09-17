@@ -1,18 +1,17 @@
 import TelegramBot from 'node-telegram-bot-api';
 import axios from 'axios';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 // Твой токен бота от BotFather
-const token = process.env.telegram_token;
-
+const token = process.env.TELEGRAM_TOKEN;
+console.log('TELEGRAM_TOKEN:', process.env.TELEGRAM_TOKEN);
 // Учетные данные для авторизации API
-const clientId = process.env.clientId;
-const clientSecret = process.env.clientSecret;
-const username = process.env.usernme;
-const password = process.env.password;
-const base_url = process.env.base_url;
+const clientId = process.env.CLIENTID;
+const clientSecret = process.env.CLIENTSECRET;
+const username = process.env.USERNME;
+const password = process.env.PASSWORD;
+const base_url = process.env.BASE_URL;
 
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
@@ -22,7 +21,7 @@ const bot = new TelegramBot(token, { polling: true });
 // Функция для получения авторизационного токена
 async function getAuthToken() {
   try {
-    const response = await axios.post(`${process.env.base_url}/auth/`, {
+    const response = await axios.post(`${process.env.BASE_URL}/auth/`, {
       grant_type: 'password',
       client_id: clientId,
       client_secret: clientSecret,
@@ -46,7 +45,7 @@ async function getAuthToken() {
 // Функция для получения статуса аппарата
 async function getMachineStatus() {
   try {
-    const response = await axios.get(`${process.env.BASE_URL}/v2/vending_machines/${process.env.vm_id}`, {
+    const response = await axios.get(`${process.env.BASE_URL}/v2/vending_machines/${process.env.VM_ID}`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${await getAuthToken()}`
@@ -88,8 +87,8 @@ bot.onText(/\/check/, async (msg) => {
 
     const status = await getMachineStatus();
 
-    const response = await axios.post(`${process.env.base_url}/v2/vending_machines/${process.env.vm_id}/dispense`, {
-      number: "106",
+    const response = await axios.post(`${process.env.BASE_URL}/v2/vending_machines/${process.env.VM_ID}/dispense`, {
+      number: "1",
       cup: "0",
       sugar: "0",
       discount: "0"
@@ -199,7 +198,7 @@ async function sendRequest() {
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify({
-      number: "106",
+      number: "1",
       cup: "0",
       sugar: "0",
       discount: "0"
