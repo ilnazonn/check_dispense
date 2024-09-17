@@ -14,6 +14,8 @@ const username = process.env.usernme;
 const password = process.env.password;
 const base_url = process.env.base_url;
 
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
 // Создание экземпляра бота
 const bot = new TelegramBot(token, { polling: true });
 
@@ -185,6 +187,42 @@ ${JSON.stringify(rebootResponse, null, 2)}
     bot.sendMessage(chatId, `Ошибка при отправке команды перезагрузки: ${error.message}`, { parse_mode: 'Markdown' });
   }
 });
+
+// Запуск проверки удаленной выдачи
+async function sendRequest() {
+  const token = await getAuthToken();
+
+  const response = await fetch(`${process.env.BASE_URL}/v2/vending_machines/${process.env.VM_ID}/dispense`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      number: "106",
+      cup: "0",
+      sugar: "0",
+      discount: "0"
+    })
+  });
+
+  const data = await response.json();
+
+  // Отправка уведомления в телеграмм, если статус не равен 200
+  if (response.status !== 200) {
+    const message = `*Запрос завершился ошибкой:* ${response.status}\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``;
+    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' });
+  }
+}
+
+// Функция для запуска периодического выполнения запроса
+function startInterval() {
+  setInterval(sendRequest, 2 * 60 * 1000);
+}
+
+// Запускаем интервал
+startInterval();
+
 
 // Запуск бота
 bot.on('polling_error', (error) => {

@@ -6,6 +6,7 @@ module.exports = {
             env_production: {
                 NODE_ENV: process.env.NODE_ENV,
                 TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN,
+                TELEGRAM_CHAT_ID: process.env.TELEGRAM_CHAT_ID,
                 CLIENTID: process.env.CLIENTID,
                 CLIENTSECRET: process.env.CLIENTSECRET,
                 USERNME: process.env.USERNME,
