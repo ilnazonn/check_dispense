@@ -210,8 +210,17 @@ async function sendRequest() {
 
   // Отправка уведомления в телеграмм, если статус не равен 200
   if (response.status !== 200) {
-    const message = `*Запрос завершился ошибкой:* ${response.status}\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``;
-    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' });
+    const status = await getMachineStatus(); // Предположим, что getMachineStatus() — это функция, возвращающая статус аппарата.
+
+    const message = `
+*Статус аппарата*: \`${status}\`
+*Запрос завершился ошибкой*: ${response.status}
+\`\`\`json
+${JSON.stringify(data, null, 2)}
+\`\`\`
+    `;
+
+    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, {parse_mode: 'Markdown'});
   }
 }
 
